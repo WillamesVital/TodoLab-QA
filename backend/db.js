@@ -6,6 +6,9 @@ const db = new Database(databasePath);
 
 db.pragma('foreign_keys = ON');
 
+// Garante que as tabelas existam antes de preparar statements
+initializeDatabase();
+
 const userQueries = {
   findByEmail: db.prepare('SELECT id, name, email, password_hash FROM users WHERE email = ?'),
   create: db.prepare('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)'),
