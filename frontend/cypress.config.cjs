@@ -1,6 +1,6 @@
-import { defineConfig } from 'cypress';
+const { defineConfig } = require('cypress');
 
-export default defineConfig({
+module.exports = defineConfig({
   env: {
     apiUrl: process.env.CYPRESS_API_URL || 'http://localhost:3001',
   },
