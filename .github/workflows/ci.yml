@@ -59,7 +59,7 @@ jobs:
         run: npm run dev -- --host 0.0.0.0 &
 
       - name: Wait for apps to be ready
-        run: npx wait-on --verbose --timeout 120000 http://localhost:3001 http://localhost:3000
+        run: npx wait-on --verbose --timeout 120000 http://localhost:3001/health http://localhost:3000
 
       - name: Run Cypress E2E
         working-directory: frontend
