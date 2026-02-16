@@ -2,7 +2,6 @@ describe('Fluxo de cadastro', () => {
   it('exibe a tela de cadastro', () => {
     cy.visitApp();
 
-    // alterna para o formulário de cadastro
     cy.goToRegister();
 
     cy.get('[data-cy="register-form"]').should('be.visible');
@@ -29,7 +28,6 @@ describe('Fluxo de cadastro', () => {
     cy.resetBackend();
     cy.visitApp();
 
-    // cria usuário pela primeira vez (fluxo feliz)
     cy.goToRegister();
     cy.registerUser({
       name: 'Usuário Teste 1',
@@ -38,7 +36,6 @@ describe('Fluxo de cadastro', () => {
     });
     cy.seeTodosScreen();
 
-    // faz logout e espera voltar para tela de login antes de ir para cadastro de novo
     cy.logout();
     cy.seeLoginForm();
     cy.goToRegister();
@@ -49,7 +46,6 @@ describe('Fluxo de cadastro', () => {
       password: 'SenhaSegura123',
     });
 
-    // backend deve responder 409 e app exibir mensagem de erro
     cy.get('[data-cy="error-message"]').should('be.visible').and('contain', 'Email já cadastrado');
     cy.get('[data-cy="register-form"]').should('be.visible');
   });
