@@ -1,13 +1,29 @@
 # TodoLab QA
 
-Aplicação simples de gerenciamento de tarefas com foco em **qualidade e testes automatizados**.
+Aplicação de gerenciamento de tarefas pensada para exercícios de qualidade de software, testes automatizados e uso guiado de IA.
+
+---
+
+## Visão geral da arquitetura
+
+- Backend: Node.js + Express + SQLite, com autenticação JWT.
+- Frontend: Vite + React, comunicação com a API via fetch.
+- Banco: arquivo SQLite em backend/database.sqlite.
+- Testes:
+	- Backend: Jest + Supertest (integração de API).
+	- Frontend: Cypress (E2E, fluxos completos).
+
+Detalhes por pasta:
+
+- [backend/README.md](backend/README.md) – API, rotas e testes de backend.
+- [frontend/README.md](frontend/README.md) – SPA em React e testes E2E.
 
 ---
 
 ## Pré-requisitos
 
-- **Node.js** v18+
-- **npm**
+- Node.js v18+
+- npm
 
 ---
 
@@ -21,7 +37,7 @@ npm install
 npm run dev
 ```
 
-O servidor sobe em **http://localhost:3001**.
+Servidor padrão em http://localhost:3001.
 
 ### 2. Frontend
 
@@ -31,14 +47,14 @@ npm install
 npm run dev
 ```
 
-A aplicação sobe em **http://localhost:3000**.
+Aplicação em http://localhost:3000.
 
 ### Resumo de portas
 
-| Serviço  | URL                     |
-|----------|-------------------------|
-| Backend  | http://localhost:3001    |
-| Frontend | http://localhost:3000    |
+| Serviço  | URL                  |
+|----------|----------------------|
+| Backend  | http://localhost:3001 |
+| Frontend | http://localhost:3000 |
 
 ---
 
@@ -51,40 +67,63 @@ cd backend
 npm test
 ```
 
+Roda todas as suites em backend/tests.
+
 ### Testes E2E (Cypress)
 
-Suba o backend em modo de teste (habilita `POST /test/reset`):
+1. Backend em modo de teste (habilita POST /test/reset):
 
 ```bash
 cd backend
 set NODE_ENV=test && node server.js
 ```
 
-Em outro terminal, suba o frontend:
+2. Frontend em outro terminal:
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-Em outro terminal, rode o Cypress:
+3. Cypress em outro terminal:
 
 ```bash
 cd frontend
-npx cypress open    # modo interativo
-npx cypress run     # modo headless
+npm run cy:open   # modo interativo
+npm run cy:run    # modo headless
 ```
+
+Mais detalhes em:
+
+- [backend/tests/README.md](backend/tests/README.md)
+- [frontend/README.md](frontend/README.md)
 
 ---
 
-## Documentação de testes
+## Uso de IA no projeto
 
-- [Estrutura de testes do backend](backend/tests/README.md)
-- [Testes E2E com Cypress](frontend/README.md)
+O projeto foi construído com apoio de IA (GitHub Copilot / GPT-5.1) seguindo algumas instruções claras:
+
+- Foco em qualidade e testes:
+	- Propor e refinar suites de Jest + Supertest para `/auth`, `/todos` e `/health`.
+	- Criar specs de Cypress para smoke e fluxo de cadastro, com comandos customizados reutilizáveis.
+
+- Padrões e convenções:
+	- Manter testes determinísticos usando reset de banco (`resetDatabase()` no backend, `cy.resetBackend()` no frontend).
+	- Usar seletores estáveis via atributos `data-cy` na UI.
+	- Encapsular fluxos repetidos (login, cadastro, navegação) em funções/comandos.
+	- Validar sempre comportamento observável (status HTTP, payload, DOM visível) e não detalhes internos.
+
+- Limites da IA:
+	- Não alterar regras de negócio sem justificativa.
+	- Não adicionar dependências desnecessárias.
+	- Manter README e documentação alinhados com o código existente.
+
+Essas diretrizes foram usadas para guiar a geração de código e testes ao longo do projeto.
 
 ---
 
 ## Referências
 
-- [PROJECT_SCOPE.md](PROJECT_SCOPE.md) — escopo funcional
-- [ROADMAP.md](ROADMAP.md) — planejamento de blocos
+- [PROJECT_SCOPE.md](PROJECT_SCOPE.md) – escopo funcional.
+- [ROADMAP.md](ROADMAP.md) – planejamento de blocos.
