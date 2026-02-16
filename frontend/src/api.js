@@ -10,11 +10,11 @@ class ApiError extends Error {
 
 async function request(path, options = {}) {
   const response = await fetch(`${baseURL}${path}`, {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
       ...(options.headers || {}),
     },
-    ...options,
   });
 
   if (response.status === 204) {

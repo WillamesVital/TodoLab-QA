@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ApiError, createTodo, deleteTodo, getTodos, login, updateTodo } from './api';
+import { ApiError, createTodo, deleteTodo, getTodos, login, register, updateTodo } from './api';
 
 const TOKEN_KEY = 'todolab_token';
 
 function App() {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || '');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [title, setTitle] = useState('');
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const isAuthenticated = useMemo(() => Boolean(token), [token]);
 
@@ -55,6 +57,25 @@ function App() {
     setLoading(true);
 
     try {
+      const response = await login({ email, password });
+      localStorage.setItem(TOKEN_KEY, response.token);
+      setToken(response.token);
+      setPassword('');
+    } catch (apiError) {
+      setError(apiError.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleRegister(event) {
+    event.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await register({ name, email, password });
+
       const response = await login({ email, password });
       localStorage.setItem(TOKEN_KEY, response.token);
       setToken(response.token);
@@ -143,37 +164,121 @@ function App() {
       ) : null}
 
       {!isAuthenticated ? (
-        <form onSubmit={handleLogin} className="card" data-cy="login-form">
-          <h2>Login</h2>
-          <label>
-            Email
-            <input
-              data-cy="login-email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              disabled={loading}
-              required
-            />
-          </label>
+        <section className="card" data-cy="auth-card">
+          {!isRegistering ? (
+            <form onSubmit={handleLogin} data-cy="login-form">
+              <h2>Login</h2>
+              <label>
+                Email
+                <input
+                  data-cy="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  disabled={loading}
+                  required
+                />
+              </label>
 
-          <label>
-            Senha
-            <input
-              data-cy="login-password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              disabled={loading}
-              required
-              minLength={6}
-            />
-          </label>
+              <label>
+                Senha
+                <input
+                  data-cy="login-password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  disabled={loading}
+                  required
+                  minLength={6}
+                />
+              </label>
 
-          <button data-cy="login-submit" type="submit" disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
+              <button data-cy="login-submit" type="submit" disabled={loading}>
+                {loading ? 'Entrando...' : 'Entrar'}
+              </button>
+
+              <p className="auth-switch">
+                Não tem conta?
+                <button
+                  type="button"
+                  className="link-button"
+                  data-cy="go-to-register"
+                  disabled={loading}
+                  onClick={() => {
+                    setError('');
+                    setIsRegistering(true);
+                    setPassword('');
+                  }}
+                >
+                  Criar conta
+                </button>
+              </p>
+            </form>
+          ) : (
+            <form onSubmit={handleRegister} data-cy="register-form">
+              <h2>Criar conta</h2>
+
+              <label>
+                Nome
+                <input
+                  data-cy="register-name"
+                  type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  disabled={loading}
+                  required
+                  minLength={2}
+                />
+              </label>
+
+              <label>
+                Email
+                <input
+                  data-cy="register-email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  disabled={loading}
+                  required
+                />
+              </label>
+
+              <label>
+                Senha
+                <input
+                  data-cy="register-password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  disabled={loading}
+                  required
+                  minLength={6}
+                />
+              </label>
+
+              <button data-cy="register-submit" type="submit" disabled={loading}>
+                {loading ? 'Criando conta...' : 'Criar conta'}
+              </button>
+
+              <p className="auth-switch">
+                Já tem conta?
+                <button
+                  type="button"
+                  className="link-button"
+                  data-cy="go-to-login"
+                  disabled={loading}
+                  onClick={() => {
+                    setError('');
+                    setIsRegistering(false);
+                    setPassword('');
+                  }}
+                >
+                  Entrar
+                </button>
+              </p>
+            </form>
+          )}
+        </section>
       ) : (
         <section className="card" data-cy="todos-screen">
           <div className="header-row">

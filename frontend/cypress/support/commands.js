@@ -54,3 +54,53 @@ Cypress.Commands.add('loginSession', (options = {}) => {
 
   cy.visit('/');
 });
+
+// Abre a tela inicial do app
+Cypress.Commands.add('visitApp', () => {
+  cy.visit('/');
+});
+
+// Garante que o formulário de login esteja visível,
+// alternando da tela de cadastro para login se necessário
+Cypress.Commands.add('seeLoginForm', () => {
+  cy.get('body').then(($body) => {
+    if ($body.find('[data-cy="go-to-login"]').length) {
+      cy.get('[data-cy="go-to-login"]').click();
+    }
+  });
+
+  cy.get('[data-cy="login-form"]').should('be.visible');
+});
+
+// Abre o formulário de cadastro a partir da tela de login
+Cypress.Commands.add('goToRegister', () => {
+  cy.get('[data-cy="go-to-register"]').click();
+  cy.get('[data-cy="register-form"]').should('be.visible');
+});
+
+// Preenche e envia o formulário de cadastro
+Cypress.Commands.add('registerUser', ({ name, email, password }) => {
+  if (name) {
+    cy.get('[data-cy="register-name"]').clear().type(name);
+  }
+
+  if (email) {
+    cy.get('[data-cy="register-email"]').clear().type(email);
+  }
+
+  if (password) {
+    cy.get('[data-cy="register-password"]').clear().type(password);
+  }
+
+  cy.get('[data-cy="register-submit"]').click();
+});
+
+// Garante que a tela autenticada (lista de todos) esteja visível
+Cypress.Commands.add('seeTodosScreen', () => {
+  cy.get('[data-cy="todos-screen"]').should('be.visible');
+});
+
+// Faz logout a partir da tela autenticada
+Cypress.Commands.add('logout', () => {
+  cy.get('[data-cy="logout"]').click();
+});
